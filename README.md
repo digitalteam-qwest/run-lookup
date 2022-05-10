@@ -15,8 +15,11 @@ To run a lookup:
 //lookupID - string - mandatory - ID of the integration
 //payload - object - non mandatory - contents of the tokens
 runLookup(integrationID, payload)
+```
 
-//Example:
+Example:
+```
+//Populating the postcode_search token
 const payload = {
     "postcode_search": {
         "name": "postcode_search",
