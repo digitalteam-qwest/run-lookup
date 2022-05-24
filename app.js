@@ -42,42 +42,56 @@ const getTokenValue = (name) => {
 
 //Takes the lookup ID and data, runs the integration and returns the data
 const runLookup = (lookupId, data = {}) => {
-    return new Promise((resolve, reject) => {
-        var vurl = '/apibroker/?api=RunLookup&id=' + lookupId + '&repeat_against=&noRetry=false&getOnlyTokens=undefined&app_name=AF-Renderer::Self&_=' + randoms + '&sid=' + sessions;
-        var vdata = {
-            "formValues": {
-                "Section 1": data
-            },
-            "usePHPIntegrations": true,
-            "formName": getTokenValue('formName'),
-            "processId": getTokenValue('processID'),
-            "tokens": {
-                "port": ""
-            },
-            "env_tokens": {},
-            "processName": getTokenValue('processName'),
-            "created": "",
-            "reference": "AJAX",
-            "formUri": ""
-        };
-        $.ajax({
-            url: vurl,
-            dataType: 'json',
-            method: 'POST',
-            data: JSON.stringify(vdata),
-            contentType: 'text/json',
-            processData: false,
-            error: function(e) {
-                console.log(e)
-                lookupStatus = false
-                reject(e)
-            },
-            success: function(doc) {
-                lookupStatus = true
-                resolve(doc.integration.transformed.rows_data)
-            }
-        })
-    })
+	return new Promise((resolve, reject) => {
+		var vurl = '/apibroker/?api=RunLookup&id=' + lookupId + '&repeat_against=&noRetry=false&getOnlyTokens=undefined&app_name=AF-Renderer::Self&_=' + randoms + '&sid=' + sessions;
+		var vdata = {
+			"formValues": {
+				"Section 1": data
+			},
+			"usePHPIntegrations": true,
+			"formName": getTokenValue('formName'),
+			"processId": getTokenValue('processID'),
+			"tokens": {
+				"port": ""
+			},
+			"env_tokens": {},
+			"processName": getTokenValue('processName'),
+			"created": "",
+			"reference": "AJAX",
+			"formUri": ""
+		};
+		$.ajax({
+			url: vurl,
+			dataType: 'json',
+			method: 'POST',
+			data: JSON.stringify(vdata),
+			contentType: 'text/json',
+			processData: false,
+			error: function(e) {
+			    let result = {
+			        hasRan: true,
+			        success: false,
+			        data: e
+			    }
+				console.log(e)
+				resolve(result)
+			},
+			success: function(doc) {
+			    let result = {
+			        hasRan: true,
+			        success: false,
+			        data: doc
+			    }
+        		try {
+            		result.data = doc.integration.transformed.rows_data
+            		result.success = true
+            		resolve(result)
+                } catch (error) {
+                    resolve(result)
+                }
+			}
+		})
+	})
 }
 
 const randomString = (e) => {
