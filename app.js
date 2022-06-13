@@ -41,7 +41,7 @@ const getTokenValue = (name) => {
 }
 
 //Takes the lookup ID and data, runs the integration and returns the data
-const runLookup = (lookupId, data = {}) => {
+const runLookup = (lookupId, data = {}, vasync = true) => {
     return new Promise((resolve, reject) => {
         var vurl = '/apibroker/runLookup?id=' + lookupId + '&repeat_against=&noRetry=false&getOnlyTokens=undefined&log_id=&app_name=AchieveForms&_=' + randoms + '&sid=' + sessions;
         var vdata = {
@@ -62,6 +62,7 @@ const runLookup = (lookupId, data = {}) => {
         };
         $.ajax({
             url: vurl,
+            async: vasync,
             dataType: 'json',
             method: 'POST',
             data: JSON.stringify(vdata),
