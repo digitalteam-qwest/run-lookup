@@ -41,8 +41,9 @@ const getTokenValue = (name) => {
 }
 
 //Takes the lookup ID and data, runs the integration and returns the data
-const runLookup = (lookupId, data = {}, vasync = true) => {
+const runLookup = (lookupId, data = {}) => {
     return new Promise((resolve, reject) => {
+
         var vurl = '/apibroker/runLookup?id=' + lookupId + '&repeat_against=&noRetry=false&getOnlyTokens=undefined&log_id=&app_name=AchieveForms&_=' + randoms + '&sid=' + sessions;
         var vdata = {
             "formValues": {
@@ -60,9 +61,10 @@ const runLookup = (lookupId, data = {}, vasync = true) => {
             "reference": "AJAX",
             "formUri": ""
         };
+
         $.ajax({
             url: vurl,
-            async: vasync,
+            async: true,
             dataType: 'json',
             method: 'POST',
             data: JSON.stringify(vdata),
@@ -93,6 +95,63 @@ const runLookup = (lookupId, data = {}, vasync = true) => {
             }
         })
     })
+}
+
+//Takes the lookup ID and data, runs the integration and returns the data, syncronously.
+const runLookupSync = (lookupId, data = {}) => {
+
+    var result = {
+        hasRan: false,
+        success: false,
+        data: null 
+    };
+
+    var vurl = '/apibroker/runLookup?id=' + lookupId + '&repeat_against=&noRetry=false&getOnlyTokens=undefined&log_id=&app_name=AchieveForms&_=' + randoms + '&sid=' + sessions;
+    var vdata = {
+        "formValues": {
+            "Section 1": data
+        },
+        "usePHPIntegrations": true,
+        "formName": getTokenValue('formName'),
+        "processId": getTokenValue('processID'),
+        "tokens": {
+            "port": ""
+        },
+        "env_tokens": {},
+        "processName": getTokenValue('processName'),
+        "created": "",
+        "reference": "AJAX",
+        "formUri": ""
+    };
+
+    $.ajax({
+        url: vurl,
+        async: false,
+        dataType: 'json',
+        method: 'POST',
+        data: JSON.stringify(vdata),
+        contentType: 'text/json',
+        processData: false,
+        error: function(e) {
+            result.hasRan = true;
+            result.success = false;
+            result.data = e;
+
+            console.log(e)
+        },
+        success: function(doc) {
+            result.hasRan = true;
+            result.success = false;
+            result.data = doc;
+
+            try {
+                result.data = doc.integration.transformed.rows_data;
+                result.success = true;
+            } catch (error) {}
+        }
+    })
+
+    return result;
 }
 
 const randomString = (e) => {
