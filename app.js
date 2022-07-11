@@ -116,7 +116,17 @@ const runLookupContinue = (lookupId, data = {}) => {
 
 //Takes the lookup ID and data, runs the integration and returns the data, syncronously.
 const runLookupSync = (lookupId, data = {}) => {
+    if (sessions === '') {
+        retrieveSessionId.then((value) => {
+            sessions = value
+            return runLookupSyncContinue(lookupId, data)
+        })
+    } else {
+        return runLookupSyncContinue(lookupId, data)
+    }
+}
 
+const runLookupSyncContinue = (lookupId, data = {}) => {
     var result = {
         hasRan: false,
         success: false,
