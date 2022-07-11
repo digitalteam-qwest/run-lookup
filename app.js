@@ -42,6 +42,7 @@ const getTokenValue = (name) => {
 
 //Takes the lookup ID and data, runs the integration and returns the data
 const runLookup = (lookupId, data = {}) => {
+    console.log('runLookup')
     return new Promise((resolve, reject) => {
         if (sessions === '') {
             retrieveSessionId.then((value) => {
@@ -78,7 +79,8 @@ const runLookupContinue = (lookupId, data = {}) => {
             "reference": "AJAX",
             "formUri": ""
         };
-
+        
+        console.log('runLookupContinue')
         $.ajax({
             url: vurl,
             async: true,
@@ -97,6 +99,8 @@ const runLookupContinue = (lookupId, data = {}) => {
                 resolve(result)
             },
             success: function(doc) {
+                
+                console.log('runLookupContinue, complete')
                 let result = {
                     hasRan: true,
                     success: false,
@@ -193,6 +197,7 @@ const randomString = (e) => {
 
 const retrieveSessionId = new Promise((resolve, reject) => {
     let url = '/authapi/isauthenticated?uri=' + location.href + '&hostname=' + location.hostname + '&withCredentials=true'
+    console.log('retrieveSessionId')
     $.ajax({
         url: url,
         dataType: 'json',
@@ -205,6 +210,7 @@ const retrieveSessionId = new Promise((resolve, reject) => {
             reject(e)
         },
         success: function(doc) {
+            console.log('retreiveSessionId, complete')
             resolve(doc['auth-session'])
         }
     });
