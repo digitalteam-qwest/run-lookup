@@ -43,6 +43,12 @@ const getTokenValue = (name) => {
 //Takes the lookup ID and data, runs the integration and returns the data
 const runLookup = (lookupId, data = {}) => {
     return new Promise((resolve, reject) => {
+        
+        if (sessions === '') {
+            retrieveSessionId.then((value) => {
+                sessions = value
+            })
+        }
 
         var vurl = '/apibroker/runLookup?id=' + lookupId + '&repeat_against=&noRetry=false&getOnlyTokens=undefined&log_id=&app_name=AchieveForms&_=' + randoms + '&sid=' + sessions;
         var vdata = {
@@ -186,7 +192,3 @@ const retrieveSessionId = new Promise((resolve, reject) => {
 let randoms = randomString(13);
 let sessions = ''
 let intRunCache = []
-
-retrieveSessionId.then((value) => {
-    sessions = value
-})
