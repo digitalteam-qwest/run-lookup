@@ -121,13 +121,10 @@ const runLookupContinue = (lookupId, data = {}) => {
 //Takes the lookup ID and data, runs the integration and returns the data, syncronously.
 const runLookupSync = (lookupId, data = {}) => {
     if (sessions === '') {
-        retrieveSessionId.then((value) => {
-            sessions = value
-            return runLookupSyncContinue(lookupId, data)
-        })
-    } else {
-        return runLookupSyncContinue(lookupId, data)
+        sessions = retrieveSessionIdSync();
     }
+
+    return runLookupSyncContinue(lookupId, data);
 }
 
 const runLookupSyncContinue = (lookupId, data = {}) => {
@@ -195,6 +192,8 @@ const randomString = (e) => {
     return e ? t.replace(/\-/g, "").substring(0, e) : t
 }
 
+
+
 const retrieveSessionId = new Promise((resolve, reject) => {
     let url = '/authapi/isauthenticated?uri=' + location.href + '&hostname=' + location.hostname + '&withCredentials=true'
     console.log('retrieveSessionId')
@@ -215,6 +214,30 @@ const retrieveSessionId = new Promise((resolve, reject) => {
         }
     });
 })
+
+const retrieveSessionIdSync = () => {
+
+    var vReturn = null;
+
+    let url = '/authapi/isauthenticated?uri=' + location.href + '&hostname=' + location.hostname + '&withCredentials=true'
+    $.ajax({
+        url: url,
+        async: false,
+        dataType: 'json',
+        method: 'GET',
+        contentType: 'text/json',
+        processData: false,
+        error: function(e) {
+            console.log(e);
+            alert('there was an error while fetching');
+        },
+        success: function(doc) {
+            vReturn = doc['auth-session'];
+        }
+    });
+
+    return vReturn;
+}
 
 let randoms = randomString(13);
 let sessions = ''
