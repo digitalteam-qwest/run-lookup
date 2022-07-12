@@ -242,3 +242,5 @@ const retrieveSessionIdSync = () => {
 let randoms = randomString(13);
 let sessions = ''
 let intRunCache = []
+
+sessions = retrieveSessionIdSync()
